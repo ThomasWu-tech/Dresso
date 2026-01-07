@@ -1,11 +1,4 @@
-import React from 'react';
-import { ScreenName } from '../types';
-
-interface OnboardingProps {
-  onNavigate: (screen: ScreenName) => void;
-}
-
-const Onboarding: React.FC<OnboardingProps> = ({ onNavigate }) => {
+const Onboarding = () => {
   return (
     <div className="relative flex h-full min-h-screen w-full max-w-md mx-auto flex-col justify-between bg-background-light dark:bg-background-dark shadow-xl overflow-hidden">
       {/* Header */}
@@ -98,16 +91,16 @@ const Onboarding: React.FC<OnboardingProps> = ({ onNavigate }) => {
       {/* Footer / Action Buttons */}
       <footer className="w-full px-6 pb-8 pt-2 bg-background-light dark:bg-background-dark">
         <div className="flex flex-col gap-3">
-          <button
-            onClick={() => onNavigate('closet')}
+          <a
+            href="closet.html"
             className="group relative flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl h-[52px] bg-primary text-white text-[17px] font-bold leading-normal tracking-[0.015em] shadow-lg shadow-primary/30 transition-all hover:scale-[1.02] active:scale-[0.98]"
           >
             <span className="relative z-10">Create Account</span>
             <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-          </button>
-          <button onClick={() => onNavigate('closet')} className="flex w-full cursor-pointer items-center justify-center rounded-xl h-[48px] bg-transparent text-gray-600 dark:text-gray-300 text-[16px] font-semibold leading-normal hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
+          </a>
+          <a href="closet.html" className="flex w-full cursor-pointer items-center justify-center rounded-xl h-[48px] bg-transparent text-gray-600 dark:text-gray-300 text-[16px] font-semibold leading-normal hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
             I already have an account
-          </button>
+          </a>
         </div>
 
         {/* Trust Indicator */}
@@ -136,4 +129,4 @@ const Onboarding: React.FC<OnboardingProps> = ({ onNavigate }) => {
   );
 };
 
-export default Onboarding;
+window.Onboarding = Onboarding;

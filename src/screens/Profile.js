@@ -1,6 +1,6 @@
-import React from 'react';
 
-const Profile: React.FC = () => {
+
+const Profile = () => {
   return (
     <div className="relative flex min-h-screen w-full flex-col overflow-hidden pb-24 bg-background-light dark:bg-background-dark">
       {/* Header */}
@@ -99,91 +99,26 @@ const Profile: React.FC = () => {
             <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-primary mr-3 group-hover:bg-primary group-hover:text-white transition-colors">
               <span className="material-symbols-outlined text-[20px]">checkroom</span>
             </div>
-            <span className="flex-1 text-gray-900 dark:text-white font-medium text-sm">Style Preferences</span>
-            <span className="material-symbols-outlined text-gray-400 text-[20px]">chevron_right</span>
+            <div className="flex-1">
+              <h4 className="text-gray-900 dark:text-white font-semibold text-sm">Clothes</h4>
+              <p className="text-gray-500 dark:text-gray-400 text-xs">28 items</p>
+            </div>
+             <span className="material-symbols-outlined text-gray-400 text-[20px]">chevron_right</span>
           </div>
           <div className="flex items-center p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer transition-colors group">
-            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-primary mr-3 group-hover:bg-primary group-hover:text-white transition-colors">
-              <span className="material-symbols-outlined text-[20px]">straighten</span>
+            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 mr-3 group-hover:bg-purple-600 group-hover:text-white transition-colors">
+               <span className="material-symbols-outlined text-[20px]">styler</span>
             </div>
-            <span className="flex-1 text-gray-900 dark:text-white font-medium text-sm">Body Measurements</span>
-            <span className="material-symbols-outlined text-gray-400 text-[20px]">chevron_right</span>
-          </div>
-          <div className="flex items-center p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer transition-colors group">
-            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-primary mr-3 group-hover:bg-primary group-hover:text-white transition-colors">
-              <span className="material-symbols-outlined text-[20px]">favorite</span>
+            <div className="flex-1">
+              <h4 className="text-gray-900 dark:text-white font-semibold text-sm">Accessories</h4>
+              <p className="text-gray-500 dark:text-gray-400 text-xs">14 items</p>
             </div>
-            <span className="flex-1 text-gray-900 dark:text-white font-medium text-sm">Saved Looks</span>
-            <div className="bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-full mr-2">New</div>
-            <span className="material-symbols-outlined text-gray-400 text-[20px]">chevron_right</span>
+             <span className="material-symbols-outlined text-gray-400 text-[20px]">chevron_right</span>
           </div>
         </div>
       </div>
-
-      {/* Settings Lists */}
-      <div className="px-4 mb-6">
-        <h3 className="text-gray-500 dark:text-gray-400 text-xs font-bold uppercase tracking-wider mb-3 px-1">App Settings</h3>
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden divide-y divide-gray-100 dark:divide-gray-700">
-           {/* Notifications */}
-           <div className="flex items-center p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer transition-colors group">
-            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 mr-3 group-hover:bg-gray-200 dark:group-hover:bg-gray-600 transition-colors">
-              <span className="material-symbols-outlined text-[20px]">notifications</span>
-            </div>
-            <span className="flex-1 text-gray-900 dark:text-white font-medium text-sm">Notifications</span>
-            <span className="material-symbols-outlined text-gray-400 text-[20px]">chevron_right</span>
-          </div>
-          {/* Account Security */}
-          <div className="flex items-center p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer transition-colors group">
-            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 mr-3 group-hover:bg-gray-200 dark:group-hover:bg-gray-600 transition-colors">
-              <span className="material-symbols-outlined text-[20px]">lock</span>
-            </div>
-            <span className="flex-1 text-gray-900 dark:text-white font-medium text-sm">Account Security</span>
-            <span className="material-symbols-outlined text-gray-400 text-[20px]">chevron_right</span>
-          </div>
-           {/* Linked Accounts */}
-           <div className="flex items-center p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer transition-colors group">
-            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 mr-3 group-hover:bg-gray-200 dark:group-hover:bg-gray-600 transition-colors">
-              <span className="material-symbols-outlined text-[20px]">link</span>
-            </div>
-            <span className="flex-1 text-gray-900 dark:text-white font-medium text-sm">Linked Accounts</span>
-            <span className="material-symbols-outlined text-gray-400 text-[20px]">chevron_right</span>
-          </div>
-        </div>
-      </div>
-      
-      {/* Support */}
-      <div className="px-4 mb-4">
-        <h3 className="text-gray-500 dark:text-gray-400 text-xs font-bold uppercase tracking-wider mb-3 px-1">Support</h3>
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden divide-y divide-gray-100 dark:divide-gray-700">
-           {/* Help Center */}
-           <div className="flex items-center p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer transition-colors group">
-            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 mr-3 group-hover:bg-gray-200 dark:group-hover:bg-gray-600 transition-colors">
-              <span className="material-symbols-outlined text-[20px]">help</span>
-            </div>
-            <span className="flex-1 text-gray-900 dark:text-white font-medium text-sm">Help Center</span>
-            <span className="material-symbols-outlined text-gray-400 text-[20px]">chevron_right</span>
-          </div>
-          {/* Privacy Policy */}
-          <div className="flex items-center p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer transition-colors group">
-            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 mr-3 group-hover:bg-gray-200 dark:group-hover:bg-gray-600 transition-colors">
-              <span className="material-symbols-outlined text-[20px]">policy</span>
-            </div>
-            <span className="flex-1 text-gray-900 dark:text-white font-medium text-sm">Privacy Policy</span>
-            <span className="material-symbols-outlined text-gray-400 text-[20px]">chevron_right</span>
-          </div>
-          {/* Log Out */}
-          <div className="flex items-center p-4 hover:bg-red-50 dark:hover:bg-red-900/10 cursor-pointer transition-colors group">
-            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-500 mr-3 group-hover:bg-red-100 dark:group-hover:bg-red-900/40 transition-colors">
-              <span className="material-symbols-outlined text-[20px]">logout</span>
-            </div>
-            <span className="flex-1 text-red-600 dark:text-red-400 font-medium text-sm">Log Out</span>
-          </div>
-        </div>
-      </div>
-
-      <p className="text-center text-xs text-gray-400 pb-6 pt-2">Version 2.4.0</p>
     </div>
   );
 };
 
-export default Profile;
+window.Profile = Profile;

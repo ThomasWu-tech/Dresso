@@ -1,7 +1,4 @@
-import React from 'react';
-import { WardrobeItem } from '../types';
-
-const WARDROBE_ITEMS: WardrobeItem[] = [
+const WARDROBE_ITEMS = [
   { id: 'w1', name: 'White Tee', image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA3ufdCT2Pwvea-_RI-3Bg7lVNo96iqNmGC3ypQ-tFf7cXDdyIugB02Da--nlqWpLtOdNJnaP1V1MS7MM_U7xHKCRAGBtnaQKkPMBnv7Q_CSH5m5jC_1eZGEoH3CeMqbCqtdGbXrUmGnVItuvDTVdkzB4xIS9nBvjIxWoZVBlv_4pc7BpMmMB6dwk2o24PxSgHq9NtMwvaIx66oGPEyUKtw_lQVkCiY5NdbA5qmh-2ESjF_u5z_0szpRhnfRwgmSayDCV04ZchWJ6M', category: 'Tops', isSelected: true },
   { id: 'w2', name: 'Denim Shorts', image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDdBzuHnX4YY3K62eGgSy8BrJAlN2HBfZedQnfMpmRoCZZPWZ9IRYYUExqT1IKXCKFDxLQNGvm1x_uNJuNIV6pncKBt4rAwqcckoLGTEnKV3l1nR4YPvpqeLKU2PG1PCNY3OCnwAMoYr-eraHpLFwoCaZpuRRFXPFLyzdnnWGwKkWHudtHHc2DxFPzAnQrrq96K8SSqSkA-0hssfHbmABryAWMv5EQbkSG1R088j5lrSt6oAOOQcJpXMf3ebiNgqdyjm7RLZhj1DAE', category: 'Bottoms', isSelected: false },
   { id: 'w3', name: 'White Kicks', image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBraIGNJ0j5uZj5jvIG2QIqZedvmjxsD5LEDvHrSY9rSoXHDD8MtjNH0RiuYUMpcaeXd6H832cpa6zj1M_My8h5OkkEzYAWxmyw6wZqp_kFoQF2hhQi71vOYmhx6NCVFJqazUGW-9eF-v5fuSNvDH1nU9msIsip10hBck_-bWo4iZchd8tFlZIeSE_FTYMKNgbMSMnfFnn22UvL6BKDo9Ebx1cyalwt4M0w2HwZhtTHVCeYmSlaujyPXy8Q-BkKDmd93xIHObrteIk', category: 'Shoes', isSelected: true },
@@ -10,14 +7,14 @@ const WARDROBE_ITEMS: WardrobeItem[] = [
   { id: 'w6', name: 'Blue Runners', image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAGrBdAlkrzkDiZW375Ig-wmTdFFd66d-nU4k5q7MzrokV0x6O3ZRNwbDA59Vjx7mv4FRMvNbIipyr6ptFo4EnDABplti27zJfGHnW9ngMRLyVJe_lyn69KqcYkjjvKnWdNrIOhr8kr-Mmh5B6KqyFatrJDLrFm9WxqVhpNx_e-Kx59Jiy7whnk8hZyHbBknNsf9DzKMOLePGF_Txm76mVqgrRooCU5P24WGXwV4eyVJbAc19pOZUDFsPXXNSQlifPzfOGCKVrTrPE', category: 'Shoes', isSelected: false },
 ];
 
-const Generator: React.FC = () => {
+const Generator = () => {
   return (
     <div className="relative flex h-full min-h-screen w-full flex-col overflow-x-hidden max-w-md mx-auto shadow-2xl bg-background-light dark:bg-background-dark pb-32">
        {/* Header */}
        <header className="flex items-center justify-between p-4 sticky top-0 z-20 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md">
-        <button className="flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-surface-light dark:hover:bg-surface-dark transition-colors">
+        <a href="closet.html" className="flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-surface-light dark:hover:bg-surface-dark transition-colors">
           <span className="material-symbols-outlined text-slate-900 dark:text-white" style={{ fontSize: '24px' }}>arrow_back_ios_new</span>
-        </button>
+        </a>
         <h1 className="text-lg font-bold leading-tight">Outfit Creator</h1>
         <div className="size-10"></div> 
       </header>
@@ -91,14 +88,14 @@ const Generator: React.FC = () => {
           <span className="font-medium text-slate-500 dark:text-slate-400">Selected Items</span>
           <span className="font-bold text-primary">2 items</span>
         </div>
-        <button className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary text-white shadow-lg shadow-primary/30 transition-all hover:bg-blue-600 active:scale-[0.98]">
+        <a href="outfits.html" className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary text-white shadow-lg shadow-primary/30 transition-all hover:bg-blue-600 active:scale-[0.98]">
           <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>auto_awesome</span>
           <span className="font-semibold text-base">Generate AI Look</span>
-        </button>
+        </a>
       </div>
 
     </div>
   );
 };
 
-export default Generator;
+window.Generator = Generator;

@@ -1,7 +1,6 @@
-import React from 'react';
-import { Outfit } from '../types';
 
-const OUTFITS: Outfit[] = [
+
+const OUTFITS = [
   {
     id: '1',
     title: 'City Casual',
@@ -81,7 +80,7 @@ const OUTFITS: Outfit[] = [
   }
 ];
 
-const Closet: React.FC = () => {
+const Closet = () => {
   return (
     <div className="relative min-h-screen flex flex-col pb-28 bg-background-light dark:bg-background-dark">
       {/* Header */}
@@ -90,105 +89,87 @@ const Closet: React.FC = () => {
           <h1 className="text-2xl font-bold leading-tight tracking-tight text-[#0d121b] dark:text-white">Closet</h1>
           <p className="text-xs text-gray-500 dark:text-gray-400 font-medium mt-0.5">24 Saved coordinations</p>
         </div>
-        <button className="flex items-center justify-center w-10 h-10 bg-white dark:bg-[#1e2736] text-[#0d121b] dark:text-white border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm active:scale-95 transition-all hover:border-primary hover:text-primary">
+        <a href="generator.html" className="flex items-center justify-center w-10 h-10 bg-white dark:bg-[#1e2736] text-[#0d121b] dark:text-white border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm active:scale-95 transition-all hover:border-primary hover:text-primary">
           <span className="material-symbols-outlined">add</span>
-        </button>
+        </a>
       </header>
 
       {/* Search & Filters */}
       <div className="sticky top-[73px] z-30 bg-background-light dark:bg-background-dark pt-3 pb-2 shadow-sm dark:shadow-none">
         <div className="px-4 mb-3">
-          <div className="group flex items-center w-full h-12 rounded-xl bg-white dark:bg-[#1e2736] border border-gray-200 dark:border-gray-700 shadow-sm focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all overflow-hidden">
-            <div className="pl-4 pr-3 text-gray-400 group-focus-within:text-primary transition-colors">
-              <span className="material-symbols-outlined">search</span>
+            <div className="relative">
+                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-[20px]">search</span>
+                <input 
+                    type="text" 
+                    placeholder="Search outfits..." 
+                    className="w-full bg-white dark:bg-card-dark border border-gray-200 dark:border-gray-700 rounded-xl py-2.5 pl-10 pr-4 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                />
             </div>
-            <input
-              className="w-full bg-transparent border-none focus:ring-0 text-base font-normal placeholder-gray-400 text-[#0d121b] dark:text-white h-full p-0"
-              type="text"
-              placeholder="Search outfits, styles, events..."
-            />
-            <button className="px-4 h-full border-l border-gray-100 dark:border-gray-700 text-gray-400 hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-              <span className="material-symbols-outlined">tune</span>
-            </button>
-          </div>
         </div>
-        <div className="px-4 flex gap-2 overflow-x-auto no-scrollbar pb-2">
-          {['All Outfits', 'Favorites', 'Summer', 'Work', 'Date Night'].map((filter, index) => (
-            <button
-              key={filter}
-              className={`flex shrink-0 items-center h-9 px-4 rounded-lg text-sm font-medium whitespace-nowrap transition-all active:scale-95 ${
-                index === 0
-                  ? 'bg-primary text-white font-bold shadow-lg shadow-primary/20'
-                  : 'bg-white dark:bg-[#1e2736] border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
-              }`}
-            >
-              {filter}
+        <div className="flex px-4 gap-2 overflow-x-auto no-scrollbar pb-2">
+            <button className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#135bec] text-white text-xs font-semibold shadow-md shadow-blue-500/20 whitespace-nowrap">
+                All
             </button>
-          ))}
+            <button className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white dark:bg-card-dark border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 text-xs font-medium hover:bg-gray-50 dark:hover:bg-gray-800 whitespace-nowrap transition-colors">
+                <span className="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
+                Warm
+            </button>
+            <button className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white dark:bg-card-dark border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 text-xs font-medium hover:bg-gray-50 dark:hover:bg-gray-800 whitespace-nowrap transition-colors">
+                <span className="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
+                Work
+            </button>
+            <button className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white dark:bg-card-dark border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 text-xs font-medium hover:bg-gray-50 dark:hover:bg-gray-800 whitespace-nowrap transition-colors">
+                <span className="w-1.5 h-1.5 rounded-full bg-teal-500"></span>
+                Relaxed
+            </button>
         </div>
       </div>
 
-      {/* Grid */}
-      <main className="p-4 grid grid-cols-2 gap-4 auto-rows-min">
-        {OUTFITS.map((outfit) => (
-          <div
-            key={outfit.id}
-            className="group relative flex flex-col bg-white dark:bg-[#1e2736] rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 ring-1 ring-gray-200 dark:ring-gray-800"
-          >
-            <div className={`absolute top-2 right-2 z-10 ${outfit.isFavorite ? '' : 'opacity-0 group-hover:opacity-100'} transition-opacity`}>
-              <button className={`w-8 h-8 rounded-full backdrop-blur-sm flex items-center justify-center shadow-sm transition-colors ${outfit.isFavorite ? 'bg-white/90 dark:bg-black/60 text-red-500 hover:bg-white' : 'bg-white/90 dark:bg-black/60 text-gray-500 hover:text-red-500 hover:bg-white'}`}>
-                <span className={`material-symbols-outlined text-[18px] ${outfit.isFavorite ? 'fill-1' : ''}`}>favorite</span>
-              </button>
-            </div>
-
-            <div className="aspect-[4/5] w-full bg-[#f8f9fc] dark:bg-gray-800 relative grid grid-cols-2 grid-rows-2 gap-0.5 border-b border-gray-100 dark:border-gray-700">
-                {/* Collage Logic based on provided HTML style */}
-                {outfit.id === '1' && (
-                  <>
-                     <div className="row-span-2 bg-center bg-cover" style={{ backgroundImage: `url('${outfit.images[0]}')` }}></div>
-                     <div className="bg-center bg-cover" style={{ backgroundImage: `url('${outfit.images[1]}')` }}></div>
-                     <div className="bg-center bg-cover" style={{ backgroundImage: `url('${outfit.images[2]}')` }}></div>
-                  </>
+      {/* Masonry Grid */}
+      <div className="px-3 pt-2">
+        <div className="columns-2 gap-3 space-y-3">
+          {OUTFITS.map((outfit) => (
+            <div
+              key={outfit.id}
+              className="break-inside-avoid relative group rounded-xl overflow-hidden bg-white dark:bg-card-dark shadow-sm border border-gray-100 dark:border-gray-800 hover:shadow-md transition-all cursor-pointer"
+            >
+              {/* Image Stack */}
+              <div className="relative aspect-[3/4] overflow-hidden bg-gray-100 dark:bg-gray-800">
+                <div className="absolute inset-0 grid grid-rows-2 gap-0.5">
+                    <div className="w-full h-full bg-cover bg-center" style={{ backgroundImage: `url('${outfit.images[0]}')` }}></div>
+                    <div className="grid grid-cols-2 gap-0.5">
+                        <div className="w-full h-full bg-cover bg-center" style={{ backgroundImage: `url('${outfit.images[1]}')` }}></div>
+                        <div className="w-full h-full bg-cover bg-center" style={{ backgroundImage: `url('${outfit.images[2]}')` }}></div>
+                    </div>
+                </div>
+                {outfit.isFavorite && (
+                    <div className="absolute top-2 right-2 z-10 w-6 h-6 rounded-full bg-white/90 dark:bg-black/60 backdrop-blur-sm flex items-center justify-center shadow-sm">
+                        <span className="material-symbols-outlined text-[14px] text-red-500 fill-1">favorite</span>
+                    </div>
                 )}
-                {outfit.id === '2' && (
-                  <>
-                     <div className="col-span-2 bg-center bg-cover" style={{ backgroundImage: `url('${outfit.images[0]}')`, backgroundPosition: 'top center' }}></div>
-                     <div className="bg-center bg-cover" style={{ backgroundImage: `url('${outfit.images[1]}')` }}></div>
-                     <div className="bg-center bg-cover" style={{ backgroundImage: `url('${outfit.images[2]}')` }}></div>
-                  </>
+                {outfit.description && (
+                     <div className="absolute bottom-2 left-2 z-10 px-2 py-0.5 rounded-md bg-white/90 dark:bg-black/60 backdrop-blur-sm shadow-sm">
+                        <span className="text-[10px] font-bold text-gray-800 dark:text-gray-200">{outfit.description}</span>
+                    </div>
                 )}
-                {outfit.id !== '1' && outfit.id !== '2' && (
-                     <>
-                     {/* Default layout pattern mimicking others mostly */}
-                     <div className="row-span-2 bg-center bg-cover" style={{ backgroundImage: `url('${outfit.images[0]}')` }}></div>
-                     <div className="bg-center bg-cover" style={{ backgroundImage: `url('${outfit.images[1]}')` }}></div>
-                     <div className="bg-center bg-cover" style={{ backgroundImage: `url('${outfit.images[2]}')` }}></div>
-                  </>
-                )}
-            </div>
-
-            <div className="p-3 flex flex-col gap-1">
-              <div className="flex justify-between items-start">
-                <h3 className="text-sm font-bold text-[#0d121b] dark:text-white line-clamp-1">{outfit.title}</h3>
-                <button className="text-gray-400 hover:text-[#0d121b] dark:hover:text-white -mr-1">
-                  <span className="material-symbols-outlined text-[20px]">more_vert</span>
-                </button>
               </div>
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className={`text-[10px] uppercase font-bold tracking-wide ${outfit.tagColor}`}>
-                  {outfit.tag}
-                </span>
-                <span className="w-1 h-1 rounded-full bg-gray-300 dark:bg-gray-600"></span>
-                <span className="text-xs text-gray-500 dark:text-gray-400">
-                    {outfit.description || `${outfit.itemCount} items`}
-                </span>
+
+              {/* Info */}
+              <div className="p-3">
+                <div className="flex justify-between items-start mb-1">
+                    <h3 className="text-sm font-bold text-gray-900 dark:text-white leading-tight">{outfit.title}</h3>
+                </div>
+                <div className="flex items-center justify-between">
+                    <span className={`text-[10px] font-semibold uppercase tracking-wide ${outfit.tagColor}`}>{outfit.tag}</span>
+                    <span className="text-[10px] text-gray-400 dark:text-gray-500 font-medium">{outfit.itemCount} items</span>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-      </main>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
 
-export default Closet;
+window.Closet = Closet;

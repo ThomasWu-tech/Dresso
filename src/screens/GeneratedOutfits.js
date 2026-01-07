@@ -1,7 +1,4 @@
-import React from 'react';
-import { Outfit } from '../types';
-
-const GENERATED_OUTFITS: Outfit[] = [
+const GENERATED_OUTFITS = [
   {
     id: 'gen-1',
     title: 'Weekend Denim',
@@ -31,14 +28,14 @@ const GENERATED_OUTFITS: Outfit[] = [
   }
 ];
 
-const GeneratedOutfits: React.FC = () => {
+const GeneratedOutfits = () => {
   return (
     <div className="relative flex flex-col w-full max-w-md mx-auto min-h-screen bg-background-light dark:bg-background-dark shadow-2xl overflow-hidden pb-24">
       {/* Header */}
       <header className="sticky top-0 z-20 flex items-center justify-between p-4 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-md">
-        <button className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors text-slate-900 dark:text-white">
+        <a href="generator.html" className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors text-slate-900 dark:text-white">
           <span className="material-symbols-outlined">arrow_back</span>
-        </button>
+        </a>
         <h1 className="text-lg font-bold leading-tight tracking-tight text-center flex-1">Generated Outfits</h1>
         <button className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors text-slate-900 dark:text-white">
           <span className="material-symbols-outlined">tune</span>
@@ -100,7 +97,7 @@ const GeneratedOutfits: React.FC = () => {
                           </span>
                         </div>
                       </div>
-                      <span className="text-xs font-medium text-slate-700 dark:text-slate-300 truncate">{acc.name}</span>
+                      <p className="text-[10px] font-medium text-slate-700 dark:text-slate-300 truncate">{acc.name}</p>
                     </div>
                   ))}
                 </div>
@@ -109,15 +106,8 @@ const GeneratedOutfits: React.FC = () => {
           </article>
         ))}
       </main>
-
-      {/* FAB */}
-      <div className="fixed bottom-20 right-6 z-30">
-        <button className="flex items-center justify-center w-14 h-14 rounded-full bg-primary text-white shadow-lg shadow-primary/40 hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all duration-300 group">
-          <span className="material-symbols-outlined text-3xl group-hover:rotate-90 transition-transform">add</span>
-        </button>
-      </div>
     </div>
   );
 };
 
-export default GeneratedOutfits;
+window.GeneratedOutfits = GeneratedOutfits;
