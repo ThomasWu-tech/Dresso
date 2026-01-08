@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup - Dresso</title>
+    
+    <!-- Tailwind CSS (via CDN for vanilla setup) -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#135bec',
+                        'background-light': '#f6f6f8',
+                        'background-dark': '#101622',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background-light text-[#0d121b] antialiased">
+    <div id="root"></div>
+
+    <!-- React & ReactDOM (UMD) -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <!-- Babel Standalone -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- API Helper -->
+    <script src="src/api.js"></script>
+
+    <!-- Components -->
+    <script type="text/babel" src="src/screens/Signup.js"></script>
+
+    <script type="text/babel">
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<Signup />);
+    </script>
+</body>
+</html>

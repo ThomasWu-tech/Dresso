@@ -92,13 +92,13 @@ const Onboarding = () => {
       <footer className="w-full px-6 pb-8 pt-2 bg-background-light dark:bg-background-dark">
         <div className="flex flex-col gap-3">
           <a
-            href="closet.html"
+            href="signup.html"
             className="group relative flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl h-[52px] bg-primary text-white text-[17px] font-bold leading-normal tracking-[0.015em] shadow-lg shadow-primary/30 transition-all hover:scale-[1.02] active:scale-[0.98]"
           >
             <span className="relative z-10">Create Account</span>
             <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
           </a>
-          <a href="closet.html" className="flex w-full cursor-pointer items-center justify-center rounded-xl h-[48px] bg-transparent text-gray-600 dark:text-gray-300 text-[16px] font-semibold leading-normal hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
+          <a href="login.html" className="flex w-full cursor-pointer items-center justify-center rounded-xl h-[48px] bg-transparent text-gray-600 dark:text-gray-300 text-[16px] font-semibold leading-normal hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
             I already have an account
           </a>
         </div>
