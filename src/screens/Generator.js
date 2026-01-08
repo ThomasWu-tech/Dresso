@@ -11,20 +11,14 @@ const Generator = () => {
   return (
     <div className="relative flex h-full min-h-screen w-full flex-col overflow-x-hidden max-w-md mx-auto shadow-2xl bg-background-light dark:bg-background-dark pb-32">
        {/* Header */}
-       <header className="flex items-center justify-between p-4 sticky top-0 z-20 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md">
-        <a href="closet.html" className="flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-surface-light dark:hover:bg-surface-dark transition-colors">
-          <span className="material-symbols-outlined text-slate-900 dark:text-white" style={{ fontSize: '24px' }}>arrow_back_ios_new</span>
-        </a>
-        <h1 className="text-lg font-bold leading-tight">Outfit Creator</h1>
-        <div className="size-10"></div> 
+       <header className="sticky top-0 z-40 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md px-4 py-3 flex items-center justify-between border-b border-gray-200/50 dark:border-gray-800/50">
+        <div className="flex flex-col">
+          <h1 className="text-2xl font-bold leading-tight tracking-tight text-[#0d121b] dark:text-white">Outfit Creator</h1>
+          <p className="text-xs text-gray-500 dark:text-gray-400 font-medium mt-0.5">Mix & match from your closet</p>
+        </div>
       </header>
 
-      <main className="flex-1 overflow-y-auto">
-        <div className="px-5 pt-2 pb-4">
-          <h2 className="text-2xl font-bold leading-tight mb-2">Mix & Match</h2>
-          <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">Select items from your closet to generate a new look.</p>
-        </div>
-
+      <main className="flex-1 overflow-y-auto pt-2">
         {/* Filter Chips */}
         <div className="flex gap-3 px-5 pb-6 overflow-x-auto no-scrollbar">
           {['All', 'Tops', 'Bottoms', 'Shoes', 'Outerwear'].map((filter, idx) => (

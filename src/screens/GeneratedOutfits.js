@@ -32,18 +32,16 @@ const GeneratedOutfits = () => {
   return (
     <div className="relative flex flex-col w-full max-w-md mx-auto min-h-screen bg-background-light dark:bg-background-dark shadow-2xl overflow-hidden pb-24">
       {/* Header */}
-      <header className="sticky top-0 z-20 flex items-center justify-between p-4 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-md">
-        <a href="generator.html" className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors text-slate-900 dark:text-white">
-          <span className="material-symbols-outlined">arrow_back</span>
-        </a>
-        <h1 className="text-lg font-bold leading-tight tracking-tight text-center flex-1">Generated Outfits</h1>
-        <button className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors text-slate-900 dark:text-white">
-          <span className="material-symbols-outlined">tune</span>
-        </button>
+      <header className="sticky top-0 z-40 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md px-4 py-3 flex items-center justify-between border-b border-gray-200/50 dark:border-gray-800/50">
+        <div className="flex flex-col">
+          <h1 className="text-2xl font-bold leading-tight tracking-tight text-[#0d121b] dark:text-white">AI Outfits</h1>
+          <p className="text-xs text-gray-500 dark:text-gray-400 font-medium mt-0.5">Your personalized generated looks</p>
+        </div>
       </header>
 
       {/* Filters */}
-      <div className="w-full overflow-x-auto no-scrollbar pb-2">
+      <main className="flex-1 overflow-y-auto pt-2">
+        <div className="w-full overflow-x-auto no-scrollbar pb-2">
         <div className="flex gap-3 px-4 min-w-max">
           <button className="flex items-center justify-center px-4 h-9 rounded-full bg-primary text-white font-medium text-sm transition-transform active:scale-95 shadow-lg shadow-primary/30">Casual</button>
           <button className="flex items-center justify-center px-4 h-9 rounded-full bg-white dark:bg-card-dark border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-medium text-sm transition-transform active:scale-95 whitespace-nowrap">Work</button>
@@ -53,7 +51,7 @@ const GeneratedOutfits = () => {
       </div>
 
       {/* Main Feed */}
-      <main className="flex-1 p-4 space-y-6">
+      <div className="p-4 space-y-6">
         {GENERATED_OUTFITS.map((outfit) => (
           <article key={outfit.id} className="bg-card-light dark:bg-card-dark rounded-2xl overflow-hidden shadow-sm border border-slate-100 dark:border-slate-800/50">
             {/* Main Image */}
@@ -105,9 +103,10 @@ const GeneratedOutfits = () => {
             </div>
           </article>
         ))}
-      </main>
-    </div>
-  );
+      </div>
+    </main>
+  </div>
+);
 };
 
 window.GeneratedOutfits = GeneratedOutfits;
