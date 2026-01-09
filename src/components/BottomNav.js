@@ -1,7 +1,6 @@
 const BottomNav = ({ currentScreen }) => {
   const navItems = [
     { id: 'generator', label: 'Generator', icon: 'auto_awesome', href: 'generator.html' },
-    { id: 'outfits', label: 'Outfits', icon: 'style', href: 'outfits.html' },
     { id: 'closet', label: 'Closet', icon: 'checkroom', href: 'closet.html' },
     { id: 'profile', label: 'Profile', icon: 'person', href: 'profile.html' },
   ];
