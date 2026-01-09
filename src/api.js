@@ -66,6 +66,28 @@ const api = {
     });
     if (!response.ok) throw new Error('Avatar upload failed');
     return response.json();
+  },
+
+  uploadClothing: async (token, file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await fetch(`${API_URL}/upload-clothing`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}` },
+      body: formData,
+    });
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.detail || 'Upload failed');
+    }
+    return response.json();
+  },
+
+  getClothingItems: async () => {
+    const response = await fetch(`${API_URL}/clothing-items`);
+    if (!response.ok) throw new Error('Failed to fetch clothing items');
+    return response.json();
   }
 };
 
