@@ -1,3 +1,7 @@
+# Environment variables
+.env
+.env.*
+
 # Logs
 logs
 *.log
@@ -26,3 +30,8 @@ dist-ssr
 # Database
 sql_app.db
 *.db
+
+# Images and Uploads
+public/images/**
+!public/images/**/
+!public/images/**/.gitkeep
