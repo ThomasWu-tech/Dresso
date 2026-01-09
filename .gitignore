@@ -31,7 +31,23 @@ dist-ssr
 sql_app.db
 *.db
 
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
 # Images and Uploads
-public/images/**
-!public/images/**/
-!public/images/**/.gitkeep
+public/images/*
+!public/images/.gitkeep
+public/images/clothing/*
+!public/images/clothing/.gitkeep
+public/images/outfits/*
+!public/images/outfits/.gitkeep
+public/images/clothing/tops/*
+!public/images/clothing/tops/.gitkeep
+public/images/clothing/bottoms/*
+!public/images/clothing/bottoms/.gitkeep
+public/images/clothing/shoes/*
+!public/images/clothing/shoes/.gitkeep
+public/images/clothing/accessories/*
+!public/images/clothing/accessories/.gitkeep
