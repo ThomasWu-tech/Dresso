@@ -2,9 +2,12 @@ const Profile = () => {
   const [user, setUser] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
   const [isEditing, setIsEditing] = React.useState(false);
-  const [editForm, setEditForm] = React.useState({ username: '', password: '' });
+  const [editForm, setEditForm] = React.useState({ username: '', password: '', height: '', weight: '' });
   const [avatarLoading, setAvatarLoading] = React.useState(false);
+  const [photoLoading, setPhotoLoading] = React.useState(false);
+  const [showPhotoViewer, setShowPhotoViewer] = React.useState(false);
   const fileInputRef = React.useRef(null);
+  const photoInputRef = React.useRef(null);
 
   React.useEffect(() => {
     const fetchUser = async () => {
@@ -17,7 +20,12 @@ const Profile = () => {
       try {
         const userData = await window.api.getMe(token);
         setUser(userData);
-        setEditForm({ username: userData.username, password: '' });
+        setEditForm({ 
+          username: userData.username, 
+          password: '',
+          height: userData.height || '',
+          weight: userData.weight || ''
+        });
       } catch (err) {
         console.error(err);
         localStorage.removeItem('token');
@@ -41,7 +49,9 @@ const Profile = () => {
     try {
       const updatedUser = await window.api.updateProfile(token, {
         username: editForm.username,
-        password: editForm.password || undefined
+        password: editForm.password || undefined,
+        height: editForm.height ? parseInt(editForm.height) : null,
+        weight: editForm.weight ? parseInt(editForm.weight) : null
       });
       setUser(updatedUser);
       setIsEditing(false);
@@ -53,6 +63,10 @@ const Profile = () => {
 
   const handleAvatarClick = () => {
     fileInputRef.current?.click();
+  };
+
+  const handlePhotoClick = () => {
+    photoInputRef.current?.click();
   };
 
   const handleFileChange = async (e) => {
@@ -68,6 +82,22 @@ const Profile = () => {
       alert(err.message);
     } finally {
       setAvatarLoading(false);
+    }
+  };
+
+  const handlePhotoChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setPhotoLoading(true);
+    const token = localStorage.getItem('token');
+    try {
+      const result = await window.api.uploadUserPhoto(token, file);
+      setUser(prev => ({ ...prev, photo_url: result.photo_url }));
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setPhotoLoading(false);
     }
   };
 
@@ -121,18 +151,47 @@ const Profile = () => {
               <div className="flex flex-col items-center text-center gap-1">
                 <h1 className="text-gray-900 dark:text-white text-2xl font-bold leading-tight">{user.username}</h1>
                 <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">{user.email || 'No email set'}</p>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary dark:text-blue-300">
-                    Fashion Enthusiast
-                  </span>
+                <div className="flex items-center gap-3 mt-2">
+                  <div className="flex flex-col items-center px-3 py-1 bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700">
+                    <span className="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold tracking-tighter">Height</span>
+                    <span className="text-sm font-bold text-gray-900 dark:text-white">{user.height ? `${user.height} cm` : '--'}</span>
+                  </div>
+                  <div className="flex flex-col items-center px-3 py-1 bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700">
+                    <span className="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold tracking-tighter">Weight</span>
+                    <span className="text-sm font-bold text-gray-900 dark:text-white">{user.weight ? `${user.weight} kg` : '--'}</span>
+                  </div>
                 </div>
               </div>
-              <button 
-                onClick={() => setIsEditing(true)}
-                className="flex items-center justify-center w-full max-w-[200px] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg h-9 px-4 text-sm font-semibold shadow-sm transition-all"
-              >
-                Edit Profile
-              </button>
+              <div className="flex flex-wrap gap-2 w-full max-w-[320px] mt-2">
+                <button 
+                  onClick={() => setIsEditing(true)}
+                  className="flex-1 min-w-[100px] flex items-center justify-center bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg h-10 px-4 text-sm font-semibold shadow-sm transition-all"
+                >
+                  Edit Profile
+                </button>
+                <button 
+                  onClick={handlePhotoClick}
+                  disabled={photoLoading}
+                  className="flex-1 min-w-[100px] flex items-center justify-center bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg h-10 px-4 text-sm font-semibold shadow-sm transition-all"
+                >
+                  {photoLoading ? 'Uploading...' : (user.photo_url ? 'Update Photo' : 'Add Photo')}
+                </button>
+                {user.photo_url && (
+                  <button 
+                    onClick={() => setShowPhotoViewer(true)}
+                    className="flex-1 min-w-[100px] flex items-center justify-center bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg h-10 px-4 text-sm font-semibold shadow-sm transition-all"
+                  >
+                    View Photo
+                  </button>
+                )}
+                <input 
+                  type="file" 
+                  ref={photoInputRef} 
+                  className="hidden" 
+                  accept="image/*"
+                  onChange={handlePhotoChange}
+                />
+              </div>
             </>
           ) : (
             <form onSubmit={handleEditSubmit} className="w-full max-w-sm space-y-4">
@@ -164,6 +223,28 @@ const Profile = () => {
                   placeholder="Leave blank to keep current"
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm p-2 border dark:bg-gray-800 dark:border-gray-600 dark:text-white"
                 />
+              </div>
+              <div className="flex gap-4">
+                <div className="flex-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Height (cm)</label>
+                  <input
+                    type="number"
+                    value={editForm.height}
+                    onChange={(e) => setEditForm({...editForm, height: e.target.value})}
+                    placeholder="e.g. 175"
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm p-2 border dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                  />
+                </div>
+                <div className="flex-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Weight (kg)</label>
+                  <input
+                    type="number"
+                    value={editForm.weight}
+                    onChange={(e) => setEditForm({...editForm, weight: e.target.value})}
+                    placeholder="e.g. 70"
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm p-2 border dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                  />
+                </div>
               </div>
               <div className="flex gap-2">
                 <button
@@ -258,6 +339,34 @@ const Profile = () => {
           </div>
         </div>
       </div>
+
+      {/* Photo Viewer Modal */}
+      {showPhotoViewer && user.photo_url && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="relative max-w-lg w-full bg-white dark:bg-gray-900 rounded-3xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-800">
+              <h3 className="text-gray-900 dark:text-white font-bold">Full Body Photo</h3>
+              <button 
+                onClick={() => setShowPhotoViewer(false)}
+                className="size-8 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              >
+                <span className="material-symbols-outlined text-gray-500">close</span>
+              </button>
+            </div>
+            <div className="aspect-[3/4] w-full bg-gray-100 dark:bg-gray-800">
+              <img src={user.photo_url} alt="Full body" className="h-full w-full object-contain" />
+            </div>
+            <div className="p-4 bg-gray-50 dark:bg-gray-800/50 flex justify-center">
+              <button 
+                onClick={() => setShowPhotoViewer(false)}
+                className="bg-primary text-white px-8 py-2 rounded-xl font-bold shadow-lg shadow-primary/20"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

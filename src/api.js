@@ -68,6 +68,22 @@ const api = {
     return response.json();
   },
 
+  uploadUserPhoto: async (token, file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await fetch(`${API_URL}/users/me/photo`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}` },
+      body: formData,
+    });
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.detail || 'Photo upload failed');
+    }
+    return response.json();
+  },
+
   uploadClothing: async (token, file) => {
     const formData = new FormData();
     formData.append('file', file);
