@@ -7,12 +7,19 @@ from typing import Optional
 import shutil
 import os
 from . import models, schemas, auth, database
-import google.generativeai as genai
+from google import genai
 from PIL import Image
 import io
+import logging
 from dotenv import load_dotenv
 
-load_dotenv()
+# Setup logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Load .env from the project root directory
+env_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env')
+load_dotenv(dotenv_path=env_path)
 
 models.Base.metadata.create_all(bind=database.engine)
 
@@ -208,14 +215,9 @@ async def upload_clothing(
     # 2. Gemini Classification
     api_key = os.getenv("GEMINI_API_KEY")
     if not api_key:
-        # For demo purposes, if no API key, let's just save it to 'tops' if it's a valid image
-        # but the prompt specifically asked for Gemini-3-Flash. 
-        # I will raise an error if not configured, as per instructions.
         raise HTTPException(status_code=500, detail="Gemini API Key not configured")
     
-    genai.configure(api_key=api_key)
-    # Using gemini-3-flash-preview as requested
-    model = genai.GenerativeModel('gemini-3-flash-preview') 
+    client = genai.Client(api_key=api_key)
     
     prompt = """
     Analyze the clothing image and provide two pieces of information:
@@ -226,9 +228,11 @@ async def upload_clothing(
     CATEGORY: [category or NOT_CLOTHING]
     FILENAME: [descriptive_name_with_underscores]
     """
-    
     try:
-        response = model.generate_content([prompt, image])
+        response = client.models.generate_content(
+            model='gemini-3-flash-preview',
+            contents=[prompt, image]
+        )
         lines = response.text.strip().split('\n')
         result_dict = {}
         for line in lines:
@@ -263,7 +267,93 @@ async def upload_clothing(
     with open(file_path, "wb") as buffer:
         buffer.write(content)
         
-    return {"category": category, "path": f"/{file_path}", "name": ai_filename.replace("_", " ").capitalize()}
+    return {"category": category, "path": f"/public/images/clothing/{category}/{filename}", "name": ai_filename.replace("_", " ").capitalize()}
+
+@app.post("/generate-outfits")
+async def generate_outfits(
+    current_user: models.User = Depends(get_current_user)
+):
+    api_key = os.getenv("GEMINI_API_KEY")
+    if not api_key:
+        raise HTTPException(status_code=500, detail="Gemini API Key not configured")
+    
+    client = genai.Client(api_key=api_key)
+
+    # Get user photo
+    user_photo_path = current_user.photo_url
+    if not user_photo_path:
+        raise HTTPException(status_code=400, detail="User photo not found. Please upload a full-body photo in Profile.")
+    
+    # Remove leading slash if present
+    if user_photo_path.startswith('/'):
+        user_photo_path = user_photo_path[1:]
+    
+    if not os.path.exists(user_photo_path):
+        raise HTTPException(status_code=404, detail=f"Photo file not found: {user_photo_path}")
+
+    # Read the user photo
+    try:
+        image = Image.open(user_photo_path)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error reading user photo: {str(e)}")
+
+    # Get available clothing items to provide context to Gemini
+    clothing_items = await list_clothing_items()
+    items_context = "\n".join([f"- {item['name']} ({item['category']}): {item['image']}" for item in clothing_items])
+
+    prompt = f"""
+    You are a professional fashion stylist. Based on the user's full-body photo (provided as an image) and their available clothing items listed below, design 3-5 stylish outfit combinations.
+    
+    Available items:
+    {items_context}
+    
+    The user's physical characteristics (height: {current_user.height}cm, weight: {current_user.weight}kg) should be considered for styling.
+    
+    Output the results as a JSON array of objects, where each object follows this EXACT structure:
+    {{
+      "id": "unique_string_id",
+      "title": "Catchy Outfit Name",
+      "images": ["path_to_outfit_preview", "item1_path", "item2_path", "item3_path"],
+      "tag": "Style Tag (e.g. Streetwear, Minimalist)",
+      "itemCount": number_of_items,
+      "tagColor": "tailwind_text_color_class (e.g. text-primary, text-orange-500)",
+      "matchPercentage": number_between_80_100,
+      "description": "Short stylish description of why this works.",
+      "occasions": ["Occasion1", "Occasion2"],
+      "accessories": []
+    }}
+    
+    Note: 
+    - For "path_to_outfit_preview", use the user's photo path: "/{user_photo_path}".
+    - For item paths, use the exact paths provided in the available items list.
+    - Ensure the JSON is valid and contains ONLY the array.
+    """
+
+    try:
+        response = client.models.generate_content(
+            model='gemini-3-flash-preview',
+            contents=[prompt, image]
+        )
+        # Extract JSON from response (sometimes Gemini wraps it in ```json ... ```)
+        text = response.text
+        if "```json" in text:
+            text = text.split("```json")[1].split("```")[0].strip()
+        elif "```" in text:
+            text = text.split("```")[1].split("```")[0].strip()
+        
+        import json
+        outfits_data = json.loads(text)
+        
+        # Save to a standalone JSON file
+        save_path = "public/generated_outfits.json"
+        with open(save_path, "w") as f:
+            json.dump(outfits_data, f, indent=2)
+            
+        logger.info(f"Gemini task completed: Generated outfits for user {current_user.id} and saved to {save_path}")
+            
+        return {"status": "success", "message": "Outfits generated", "file": f"/{save_path}"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error generating outfits: {str(e)}")
 
 @app.get("/clothing-items")
 async def list_clothing_items():
