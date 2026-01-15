@@ -21,7 +21,11 @@ app = FastAPI()
 # CORS configuration to allow frontend to communicate with backend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # For development, allow all. In production, specify domains.
+    allow_origins=[
+        "http://localhost:8001",
+        "http://127.0.0.1:8001",
+        "http://localhost:3000",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -130,6 +134,15 @@ async def update_user_me(
     if user_update.password:
         current_user.hashed_password = auth.get_password_hash(user_update.password)
     
+    if user_update.height is not None:
+        current_user.height = user_update.height
+        
+    if user_update.weight is not None:
+        current_user.weight = user_update.weight
+        
+    if user_update.photo_url is not None:
+        current_user.photo_url = user_update.photo_url
+    
     try:
         db.commit()
         db.refresh(current_user)
@@ -157,6 +170,28 @@ async def upload_avatar(
     db.commit()
     db.refresh(current_user)
     return {"avatar_url": avatar_url}
+
+@app.post("/users/me/photo")
+async def upload_user_photo(
+    file: UploadFile = File(...), 
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    upload_dir = "public/images/user"
+    os.makedirs(upload_dir, exist_ok=True)
+    
+    extension = os.path.splitext(file.filename)[1] or ".jpg"
+    filename = f"user_{current_user.id}{extension}"
+    file_location = os.path.join(upload_dir, filename)
+    
+    with open(file_location, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+        
+    photo_url = f"/public/images/user/{filename}"
+    current_user.photo_url = photo_url
+    db.commit()
+    db.refresh(current_user)
+    return {"photo_url": photo_url}
 
 @app.post("/upload-clothing")
 async def upload_clothing(
@@ -260,6 +295,8 @@ async def list_clothing_items():
 
 # Mount static files for avatars
 app.mount("/static", StaticFiles(directory="backend/static"), name="static")
+# Mount public directory for user uploads
+app.mount("/public", StaticFiles(directory="public"), name="public")
 # Mount src directory for components
 app.mount("/src", StaticFiles(directory="src"), name="src")
 # Mount root directory for HTML files (must be last)

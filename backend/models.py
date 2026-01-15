@@ -9,3 +9,6 @@ class User(Base):
     email = Column(String, unique=True, index=True)
     hashed_password = Column(String)
     avatar_url = Column(String, nullable=True)
+    height = Column(Integer, nullable=True)  # in cm
+    weight = Column(Integer, nullable=True)  # in kg
+    photo_url = Column(String, nullable=True) # Full body picture

@@ -11,10 +11,16 @@ class UserCreate(UserBase):
 class UserUpdate(BaseModel):
     username: Optional[str] = None
     password: Optional[str] = None
+    height: Optional[int] = None
+    weight: Optional[int] = None
+    photo_url: Optional[str] = None
 
 class User(UserBase):
     id: int
     avatar_url: Optional[str] = None
+    height: Optional[int] = None
+    weight: Optional[int] = None
+    photo_url: Optional[str] = None
 
     class Config:
         from_attributes = True
