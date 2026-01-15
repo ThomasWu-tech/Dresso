@@ -4,16 +4,38 @@ const Generator = () => {
   const [uploading, setUploading] = React.useState(false);
   const [filter, setFilter] = React.useState('All');
   const [message, setMessage] = React.useState(null);
+  const [showFloating, setShowFloating] = React.useState(true);
+  const lastScrollY = React.useRef(0);
+  const mainRef = React.useRef(null);
   const fileInputRef = React.useRef(null);
 
   React.useEffect(() => {
     fetchItems();
+    
+    const mainEl = mainRef.current;
+    if (!mainEl) return;
+
+    const handleScroll = () => {
+      const currentScrollY = mainEl.scrollTop;
+      // Only hide if scrolling down significantly and not near the top
+      if (currentScrollY > lastScrollY.current && currentScrollY > 200) {
+        setShowFloating(false);
+      } else {
+        setShowFloating(true);
+      }
+      lastScrollY.current = currentScrollY;
+    };
+
+    mainEl.addEventListener('scroll', handleScroll);
+    return () => mainEl.removeEventListener('scroll', handleScroll);
   }, []);
 
   const fetchItems = async () => {
      try {
        const data = await window.api.getClothingItems();
-       setItems(data);
+       // Filter out user full-body photos from the items list
+       const filteredData = data.filter(item => !item.image.includes('/public/images/user/'));
+       setItems(filteredData);
      } catch (error) {
        console.error('Error fetching items:', error);
      } finally {
@@ -64,6 +86,32 @@ const Generator = () => {
 
   const selectedCount = items.filter(i => i.isSelected).length;
 
+  const handleGenerateClick = async (e) => {
+    e.preventDefault();
+    if (selectedCount === 0) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      // Set a flag in localStorage to indicate generation is in progress
+      localStorage.setItem('outfit_generation_status', 'in_progress');
+      
+      // Navigate to closet page immediately as requested
+      window.location.href = "closet.html";
+
+      // Call the generation API in the background (the browser might cancel this on navigation if not careful, 
+      // but in this simple setup we'll trigger it. For a more robust app, this would be a background task on the server)
+      window.api.generateOutfits(token).then(() => {
+        localStorage.setItem('outfit_generation_status', 'completed');
+      }).catch(err => {
+        console.error('Generation failed:', err);
+        localStorage.setItem('outfit_generation_status', 'failed');
+      });
+
+    } catch (error) {
+      console.error('Error starting generation:', error);
+    }
+  };
+
   return (
     <div className="relative flex h-full min-h-screen w-full flex-col overflow-x-hidden max-w-md mx-auto shadow-2xl bg-background-light dark:bg-background-dark pb-32">
        {/* Header */}
@@ -74,7 +122,7 @@ const Generator = () => {
         </div>
       </header>
 
-      <main className="flex-1 overflow-y-auto pt-2">
+      <main ref={mainRef} className="flex-1 overflow-y-auto pt-2">
         {/* Filter Chips */}
         <div className="flex gap-3 px-5 pb-6 overflow-x-auto no-scrollbar">
           {['All', 'Tops', 'Bottoms', 'Shoes', 'Accessories'].map((f) => (
@@ -177,20 +225,33 @@ const Generator = () => {
         )}
       </main>
 
-      {/* Bottom Action Bar */}
-      <div className="absolute bottom-[65px] left-0 z-30 w-full bg-white/90 dark:bg-background-dark/90 px-5 py-4 backdrop-blur-xl border-t border-slate-100 dark:border-slate-800">
-        <div className="mb-3 flex items-center justify-between text-sm">
-          <span className="font-medium text-slate-500 dark:text-slate-400">Selected Items</span>
-          <span className="font-bold text-primary">{selectedCount} items</span>
-        </div>
-        <a 
-          href={selectedCount > 0 ? "outfits.html" : "#"} 
-          onClick={(e) => selectedCount === 0 && e.preventDefault()}
-          className={`flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary text-white shadow-lg shadow-primary/30 transition-all hover:bg-blue-600 active:scale-[0.98] ${selectedCount === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+      {/* Floating Action Button */}
+      <div className={`fixed bottom-24 left-1/2 -translate-x-1/2 z-40 w-full max-w-[320px] transition-all duration-500 ease-out ${showFloating ? 'translate-y-0 opacity-100' : 'translate-y-28 opacity-0 pointer-events-none'}`}>
+        <button 
+          onClick={handleGenerateClick}
+          className={`w-full flex items-center gap-3 pl-5 pr-2 py-2.5 rounded-2xl shadow-2xl transition-all group ${
+            selectedCount > 0 
+            ? 'bg-primary text-white shadow-primary/40 hover:bg-blue-600 active:scale-95' 
+            : 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 cursor-not-allowed shadow-none'
+          }`}
         >
-          <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>auto_awesome</span>
-          <span className="font-semibold text-base">Generate AI Look</span>
-        </a>
+          <div className={`flex items-center justify-center size-10 rounded-xl transition-colors ${
+            selectedCount > 0 ? 'bg-white/20' : 'bg-slate-300 dark:bg-slate-700'
+          }`}>
+            <span className="material-symbols-outlined text-[24px]">auto_awesome</span>
+          </div>
+          <div className="flex flex-col">
+            <span className="text-[10px] font-bold uppercase tracking-wider opacity-70 leading-none mb-1">Generate AI Look</span>
+            <span className="text-sm font-bold leading-none">
+              {selectedCount > 0 ? `${selectedCount} Items Selected` : 'Select items to start'}
+            </span>
+          </div>
+          <div className={`ml-auto size-10 flex items-center justify-center rounded-xl transition-colors ${
+            selectedCount > 0 ? 'bg-white text-primary' : 'bg-slate-300 dark:bg-slate-700 text-slate-400'
+          }`}>
+            <span className="material-symbols-outlined">arrow_forward</span>
+          </div>
+        </button>
       </div>
 
     </div>

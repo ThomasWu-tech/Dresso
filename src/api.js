@@ -104,6 +104,18 @@ const api = {
     const response = await fetch(`${API_URL}/clothing-items`);
     if (!response.ok) throw new Error('Failed to fetch clothing items');
     return response.json();
+  },
+
+  generateOutfits: async (token) => {
+    const response = await fetch(`${API_URL}/generate-outfits`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.detail || 'Generation failed');
+    }
+    return response.json();
   }
 };
 

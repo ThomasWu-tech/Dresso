@@ -1,9 +1,86 @@
 
 
 const Closet = () => {
-  const outfits = window.OUTFITS_DATA || [];
+  const [outfits, setOutfits] = React.useState([]);
+  const [status, setStatus] = React.useState(localStorage.getItem('outfit_generation_status'));
+
+  const fetchGeneratedOutfits = async () => {
+    try {
+      const response = await fetch('/public/generated_outfits.json?t=' + new Date().getTime());
+      if (response.ok) {
+        let generatedData = await response.json();
+        
+        // Filter out full-body user photos from outfit item images
+        generatedData = generatedData.map(outfit => ({
+          ...outfit,
+          images: outfit.images.filter(img => !img.includes('/public/images/user/'))
+        }));
+        
+        setOutfits(generatedData);
+      } else {
+        // Fallback to initial data if file doesn't exist yet
+        setOutfits(window.OUTFITS_DATA || []);
+      }
+    } catch (error) {
+      console.error('Error fetching generated outfits:', error);
+      setOutfits(window.OUTFITS_DATA || []);
+    }
+  };
+
+  React.useEffect(() => {
+    // Initial fetch
+    fetchGeneratedOutfits();
+
+    // Poll for status changes and refresh data
+    const interval = setInterval(() => {
+      const currentStatus = localStorage.getItem('outfit_generation_status');
+      
+      // If status changed or if it's currently completed, we should check for new data
+      if (currentStatus !== status) {
+        setStatus(currentStatus);
+        fetchGeneratedOutfits();
+        if (currentStatus === 'completed') {
+          // Clear the status after a short delay so the prompt disappears
+          setTimeout(() => {
+            localStorage.removeItem('outfit_generation_status');
+            setStatus(null);
+          }, 3000);
+        }
+      } else if (currentStatus === 'completed') {
+        // If it's already completed, still poll occasionally to ensure we have the latest
+        fetchGeneratedOutfits();
+      }
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [status]);
+
   return (
     <div className="relative min-h-screen flex flex-col pb-28 bg-background-light dark:bg-background-dark">
+      {/* Generation Status Message */}
+      {status === 'in_progress' && (
+        <div className="bg-primary/10 border-b border-primary/20 px-4 py-3 flex items-center gap-3 animate-pulse">
+          <div className="size-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+          <p className="text-sm font-medium text-primary">
+            AI is designing your new outfits... This may take a minute.
+          </p>
+        </div>
+      )}
+      {status === 'failed' && (
+        <div className="bg-red-50 border-b border-red-100 px-4 py-3 flex items-center gap-3">
+          <span className="material-symbols-outlined text-red-500 text-[20px]">error</span>
+          <p className="text-sm font-medium text-red-600">
+            Outfit generation failed. Please try again.
+          </p>
+          <button 
+            onClick={() => localStorage.removeItem('outfit_generation_status')}
+            className="ml-auto text-xs font-bold text-red-700 uppercase"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
+
       {/* Header */}
       <header className="sticky top-0 z-40 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md px-4 py-3 flex items-center justify-between border-b border-gray-200/50 dark:border-gray-800/50">
         <div className="flex flex-col">
@@ -67,11 +144,6 @@ const Closet = () => {
                 {outfit.isFavorite && (
                     <div className="absolute top-2 right-2 z-10 w-6 h-6 rounded-full bg-white/90 dark:bg-black/60 backdrop-blur-sm flex items-center justify-center shadow-sm">
                         <span className="material-symbols-outlined text-[14px] text-red-500 fill-1">favorite</span>
-                    </div>
-                )}
-                {outfit.description && (
-                     <div className="absolute bottom-2 left-2 z-10 px-2 py-0.5 rounded-md bg-white/90 dark:bg-black/60 backdrop-blur-sm shadow-sm">
-                        <span className="text-[10px] font-bold text-gray-800 dark:text-gray-200">{outfit.description}</span>
                     </div>
                 )}
               </div>
