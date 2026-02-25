@@ -36,6 +36,26 @@ public enum DressoClientError: Error {
     case other(Error)
 }
 
+extension DressoClientError: LocalizedError {
+    public var errorDescription: String? {
+        switch self {
+        case .invalidURL:
+            return "The backend URL is invalid."
+        case .invalidResponse:
+            return "Received an invalid response from the server."
+        case .httpError(let status, let detail):
+            if let detail, !detail.isEmpty {
+                return detail
+            }
+            return "Request failed with HTTP status code \(status)."
+        case .decodingError(let error):
+            return "Failed to decode server response: \(error.localizedDescription)"
+        case .other(let error):
+            return error.localizedDescription
+        }
+    }
+}
+
 // MARK: - Client
 
 public final class DressoClient {
