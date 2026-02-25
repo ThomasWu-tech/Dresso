@@ -83,11 +83,15 @@ public final class DressoClient {
     }
     
     public func login(email: String, password: String) async throws {
-        let payload: [String: Any] = [
+        let payload: [String: String] = [
             "username": email,
-            "password": password
+            "password": password,
+            "grant_type": "password",
+            "scope": "",
+            "client_id": "",
+            "client_secret": ""
         ]
-        let auth: AuthResponse = try await postJSON(path: "/token", jsonBody: payload)
+        let auth: AuthResponse = try await postForm(path: "/token", formBody: payload)
         self.accessToken = auth.access_token
     }
     
@@ -154,9 +158,21 @@ public final class DressoClient {
         }
         
         guard (200..<300).contains(httpResponse.statusCode) else {
-            let detail = (try? JSONSerialization.jsonObject(with: data, options: []))
-                .flatMap { $0 as? [String: Any] }?["detail"] as? String
-            throw DressoClientError.httpError(status: httpResponse.statusCode, detail: detail)
+            var detailMessage: String?
+            if let json = try? JSONSerialization.jsonObject(with: data, options: []),
+               let dict = json as? [String: Any] {
+                if let detail = dict["detail"] as? String {
+                    detailMessage = detail
+                } else if let detailArray = dict["detail"] as? [[String: Any]],
+                          let first = detailArray.first {
+                    let msg = first["msg"] as? String
+                    let loc = (first["loc"] as? [Any])?.map { String(describing: $0) }.joined(separator: ".")
+                    detailMessage = [msg, loc].compactMap { $0 }.joined(separator: " – ")
+                }
+            } else if let text = String(data: data, encoding: .utf8) {
+                detailMessage = text
+            }
+            throw DressoClientError.httpError(status: httpResponse.statusCode, detail: detailMessage)
         }
         
         do {
@@ -184,6 +200,20 @@ public final class DressoClient {
     
     private func postJSON<T: Decodable>(path: String, jsonBody: [String: Any]) async throws -> T {
         let request = try makeRequest(path: path, method: "POST", jsonBody: jsonBody)
+        let (data, response) = try await data(for: request)
+        return try handleResponse(data, response, as: T.self)
+    }
+
+    private func postForm<T: Decodable>(path: String, formBody: [String: String]) async throws -> T {
+        guard let url = URL(string: path, relativeTo: baseURL) else {
+            throw DressoClientError.invalidURL
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/x-www-form-urlencoded; charset=utf-8", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        let bodyString = Self.formURLEncodedString(formBody)
+        request.httpBody = bodyString.data(using: String.Encoding.utf8)
         let (data, response) = try await data(for: request)
         return try handleResponse(data, response, as: T.self)
     }
@@ -273,6 +303,16 @@ public final class DressoClient {
         request.httpBody = body
         
         return try await data(for: request)
+    }
+    
+    private static func formURLEncodedString(_ params: [String: String]) -> String {
+        let allowed = CharacterSet(charactersIn: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~")
+        return params.map { key, value in
+            let escapedKey = key.addingPercentEncoding(withAllowedCharacters: allowed) ?? key
+            let escapedValue = value.addingPercentEncoding(withAllowedCharacters: allowed) ?? value
+            return "\(escapedKey)=\(escapedValue)"
+        }
+        .joined(separator: "&")
     }
 }
 
