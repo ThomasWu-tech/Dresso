@@ -1,13 +1,13 @@
 ## Dresso Swift Playground Client (.swiftpm)
 
 This folder contains a **Swift Package–based client** (using a `.swiftpm` package) for the Dresso backend.
-Instead of using the Capacitor/iOS Xcode app, you can drive and test the backend directly from Swift Playgrounds or Xcode using SwiftPM.
+Instead of using the previous iOS wrapper project, you can drive and test the backend directly from Swift Playgrounds or Xcode using SwiftPM.
 
 ### 1. Folder layout
 
 - **`DressoClient.swiftpm/Package.swift`**: Swift Package manifest for the client.
 - **`DressoClient.swiftpm/Sources/DressoClient/DressoClient.swift`**:
-  - Defines a small `DressoClient` class that talks to the existing Node/Express backend.
+  - Defines a small `DressoClient` class that talks to the existing FastAPI backend.
   - Exposes high-level async methods such as `signup`, `login`, `currentUser`, `clothingItems`, `uploadAvatar`, and `uploadClothing`.
 - **`DressoClient.swiftpm/Sources/DressoClient/Main.swift`**:
   - Simple executable entry point using `@main`.
@@ -25,14 +25,15 @@ The playground expects the Dresso backend to be running locally at **`http://loc
 From the project root (`Dresso`):
 
 ```bash
-npm install        # first time only
-node server.js     # or: npm run dev
+cd backend
+pip install -r requirements.txt   # first time only
+uvicorn main:app --reload
 ```
 
 You should see:
 
 ```text
-Server running on http://localhost:8000
+Uvicorn running on http://127.0.0.1:8000
 ```
 
 If you run the server on a different host or port, update `dressoBaseURL` at the top of `Contents.swift`.
@@ -61,7 +62,7 @@ Running behavior is the same; logs will appear in the console/log area.
 ### 4. What the Swift UI client does
 
 - **`DressoClient.swift`**:
-  - Handles networking to your Node backend.
+  - Handles networking to your FastAPI backend.
   - Stores an `accessToken` once you sign up or log in.
   - Exposes async functions:
     - `signup(username:email:password:)`
@@ -247,7 +248,7 @@ Make sure the URL is reachable from the machine/device running the playground.
 
 ### 12. Summary
 
-- The previous Capacitor/Xcode-based client can be replaced **for development/testing purposes** by this SwiftPM-based `.swiftpm` package.
+- The previous iOS wrapper client can be replaced **for development/testing purposes** by this SwiftPM-based `.swiftpm` package.
 - All client behavior now lives in:
   - `DressoSwiftPlayground/DressoClient.swiftpm/Sources/DressoClient`
 - Follow the steps above to:
@@ -288,7 +289,7 @@ If you prefer to **create the Swift project yourself** (in Xcode or Swift Playgr
     - Change to your backend address if needed (e.g. a LAN IP).
 
 - **5. Build, run, and test**
-  - Ensure your Node backend is running as described in Section 2.
+  - Ensure your FastAPI backend is running as described in Section 2.
   - Build and run the app:
     - In Xcode: select an iOS simulator or device and press **Run**.
     - In Swift Playgrounds: tap **Run**.
@@ -297,4 +298,3 @@ If you prefer to **create the Swift project yourself** (in Xcode or Swift Playgr
     - Navigation to **Sign Up** (`SignupView`) and **Closet** (`ClosetView`) as you authenticate.
 
 In short: copy `DressoClient.swift`, `DressoAppState.swift`, `Views.swift`, and the `DressoApp` definition from `Main.swift` into your manually created SwiftUI app, then run it against your existing backend.
-
