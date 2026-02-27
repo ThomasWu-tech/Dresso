@@ -3,8 +3,8 @@ import Foundation
 // MARK: - Configuration
 
 /// Base URL for the running Dresso backend.
-/// Change this if your server is not on localhost:8000.
-public let dressoBaseURL = URL(string: "http://localhost:8000")!
+/// Change this if your server is not on api.dresso.online.
+public let dressoBaseURL = URL(string: "https://api.dresso.online")!
 
 // MARK: - Models
 
@@ -315,4 +315,3 @@ public final class DressoClient {
         .joined(separator: "&")
     }
 }
-
