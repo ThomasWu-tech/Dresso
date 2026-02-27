@@ -1,10 +1,10 @@
 import Foundation
 import SwiftUI
+import Combine
 
 enum MainScreen: CaseIterable {
     case generator
     case closet
-    case outfits
     case profile
 }
 
@@ -20,6 +20,9 @@ final class DressoAppState: ObservableObject {
     @Published var isGeneratorLoading: Bool = false
     @Published var generatorFilter: String = "All"
     @Published var selectedOutfit: Outfit? = SampleData.outfits.first
+    @Published var isShowingOutfitDetail: Bool = false
+    @Published var selectedGeneratorItemIDs: Set<String> = []
+    @Published var favoriteOutfitIDs: Set<String> = []
     
     let client = DressoClient()
     
@@ -59,6 +62,10 @@ final class DressoAppState: ObservableObject {
     func logout() {
         token = nil
         user = nil
+        selectedMainScreen = .closet
+        selectedOutfit = nil
+        isShowingOutfitDetail = false
+        selectedGeneratorItemIDs.removeAll()
     }
     
     func refreshGeneratorItems() async {
@@ -66,7 +73,11 @@ final class DressoAppState: ObservableObject {
         isGeneratorLoading = true
         defer { isGeneratorLoading = false }
         do {
-            generatorItems = try await client.clothingItems()
+            let items = try await client.clothingItems()
+            generatorItems = items
+            // Keep only selections that still exist after refresh.
+            let validIDs = Set(items.map(\.id))
+            selectedGeneratorItemIDs = selectedGeneratorItemIDs.intersection(validIDs)
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -112,6 +123,34 @@ final class DressoAppState: ObservableObject {
         return generatorItems.filter { $0.category.caseInsensitiveCompare(generatorFilter) == .orderedSame }
     }
     
+    func isGeneratorItemSelected(_ id: String) -> Bool {
+        selectedGeneratorItemIDs.contains(id)
+    }
+    
+    func toggleGeneratorItemSelection(_ id: String) {
+        if selectedGeneratorItemIDs.contains(id) {
+            selectedGeneratorItemIDs.remove(id)
+        } else {
+            selectedGeneratorItemIDs.insert(id)
+        }
+    }
+    
+    var selectedGeneratorItemCount: Int {
+        selectedGeneratorItemIDs.count
+    }
+    
+    func isOutfitFavorite(_ outfit: Outfit) -> Bool {
+        favoriteOutfitIDs.contains(outfit.id) || outfit.isFavorite
+    }
+    
+    func toggleOutfitFavorite(_ outfit: Outfit) {
+        if favoriteOutfitIDs.contains(outfit.id) {
+            favoriteOutfitIDs.remove(outfit.id)
+        } else {
+            favoriteOutfitIDs.insert(outfit.id)
+        }
+    }
+    
     // MARK: - Private
     
     private func authenticateFlow(_ action: () async throws -> Void) async {
@@ -123,10 +162,11 @@ final class DressoAppState: ObservableObject {
             try await action()
             token = "set"
             user = try await client.currentUser()
+            isShowingOutfitDetail = false
+            selectedGeneratorItemIDs.removeAll()
             await refreshGeneratorItems()
         } catch {
             errorMessage = error.localizedDescription
         }
     }
 }
-
